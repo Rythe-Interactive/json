@@ -37,7 +37,8 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
     ordered_map(std::initializer_list<T> init, const Allocator& alloc = Allocator() )
         : Container{init, alloc} {}
 
-    std::pair<iterator, bool> emplace(const key_type& key, T&& t)
+    template<typename... Args>
+    std::pair<iterator, bool> emplace(const key_type& key, Args&&... args)
     {
         for (auto it = this->begin(); it != this->end(); ++it)
         {
@@ -46,7 +47,7 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
                 return {it, false};
             }
         }
-        Container::emplace_back(key, t);
+        Container::emplace_back(key, std::forward<Args>(args)...);
         return {--this->end(), true};
     }
 
